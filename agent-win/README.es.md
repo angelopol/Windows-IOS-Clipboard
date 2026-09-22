@@ -40,22 +40,18 @@ La primera vez te pedirá la **URL del servidor** y el **token**. Se guardan en
 | Pausar auto-envío | Click en el icono de la bandeja → *Auto-enviar: ON/OFF* |
 | Salir | Menú de la bandeja → *Salir* |
 
-## Empaquetar como .exe (PyInstaller)
+## Compilar, publicar y auto-arrancar
 
-```powershell
-pip install pyinstaller
-pyinstaller --noconsole --onefile --name ClipboardAgent agent.py
-```
+Guía completa en [`DEPLOY.es.md`](DEPLOY.es.md). En resumen:
 
-El ejecutable queda en `dist\ClipboardAgent.exe`.
-
-### Arranque automático con Windows
-
-Crea un acceso directo a `ClipboardAgent.exe` (o a `pythonw agent.py`) en:
-
-```
-%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
-```
+- **Compilar el `.exe`**: haz push de un tag → GitHub Actions lo compila y
+  publica un Release (sin Python local), o ejecuta `.\build.ps1` en local.
+- **Arranque automático (recomendado)**: `service\install-autostart.ps1` lo
+  registra en Task Scheduler al iniciar sesión — corre en tu sesión de usuario,
+  así que portapapeles, hotkey y tray funcionan.
+- **Servicio NSSM**: posible pero **no adecuado** — un servicio en session 0 no
+  puede acceder al portapapeles, hotkey ni tray. Detalle y advertencia en
+  [`DEPLOY.es.md`](DEPLOY.es.md).
 
 ## Notas y limitaciones
 

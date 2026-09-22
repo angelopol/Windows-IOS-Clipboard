@@ -39,22 +39,18 @@ saved in `%APPDATA%\ClipboardAgent\config.json`.
 | Pause auto-upload | Click the tray icon → *Auto-upload: ON/OFF* |
 | Quit | Tray menu → *Quit* |
 
-## Package as .exe (PyInstaller)
+## Build, release and auto-start
 
-```powershell
-pip install pyinstaller
-pyinstaller --noconsole --onefile --name ClipboardAgent agent.py
-```
+See [`DEPLOY.md`](DEPLOY.md) for the full guide. In short:
 
-The executable lands in `dist\ClipboardAgent.exe`.
-
-### Auto-start with Windows
-
-Create a shortcut to `ClipboardAgent.exe` (or to `pythonw agent.py`) in:
-
-```
-%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
-```
+- **Build the `.exe`**: push a tag → GitHub Actions builds it and publishes a
+  Release (no local Python needed), or run `.\build.ps1` locally.
+- **Auto-start (recommended)**: `service\install-autostart.ps1` registers it via
+  Task Scheduler at logon — runs in your user session, so clipboard, hotkey and
+  tray work.
+- **NSSM service**: possible but **not suitable** — a session-0 service can't
+  access the clipboard, hotkey or tray. Details and caveat in
+  [`DEPLOY.md`](DEPLOY.md).
 
 ## Notes and limitations
 
