@@ -57,14 +57,20 @@ Accept: application/json
    - **Headers**:
      - `Authorization` = `Bearer YOUR_TOKEN`
      - `Accept` = `application/json`
-4. **Get Dictionary Value** → key `clips` (gives you the list of 5 objects).
-5. **Get Dictionary Value** again → key `text`, **input: the whole list from
-   step 4** (not a single item — don't use "Repeat with Each" here). Shortcuts
-   returns a flat list of exactly 5 texts. See Troubleshooting in
-   [ver-clipboard.md](ver-clipboard.md#troubleshooting-i-get-more-than-5-items--raw-data-instead-of-clean-text)
-   if you see more than 5 or raw records instead of clean text.
+4. **Get Dictionary Value** → **Key** field typed literally as `clips` (gives
+   you the list of 5 objects). Don't leave Key blank/"Ask Each Time" — see
+   Troubleshooting below.
+5. **Get Dictionary Value** again → **Key** typed literally as `text`,
+   **input: the whole list from step 4** (not a single item — don't use
+   "Repeat with Each" here). Shortcuts returns a flat list of exactly 5 texts.
 6. **Choose from List** → list = the **output of step 5** (not step 4's list of
    `{id, text, created_at}` objects), prompt `Choose a text`.
+
+If you see more than 5 items, raw JSON records, or the shortcut asks you to tap
+through values by hand, see Troubleshooting in
+[ver-clipboard.md](ver-clipboard.md#troubleshooting-i-get-more-than-5-items--raw-data-instead-of-clean-text)
+and
+[here](ver-clipboard.md#troubleshooting-the-shortcut-asks-me-to-pick-a-value-twice--shows-raw-json-to-tap-through).
 7. **Copy to Clipboard** → result of step 6.
 8. *(Optional)* **Show Notification**: "Copied ✓".
 

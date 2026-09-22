@@ -93,6 +93,23 @@ Si tu atajo ya tiene la versión con Repetir/Añadir a variable, borra esas dos
 acciones y sustitúyelas por la única acción "Obtener valor del diccionario
 (clave: text) sobre la lista del paso 4" del paso 5.
 
+### Solución de problemas: el atajo me pide elegir un valor dos veces / me muestra el JSON crudo para tocarlo a mano
+Esto significa que el campo **Clave** de una acción "Obtener valor del
+diccionario" se quedó vacío en vez de tener la clave escrita. Atajos tiene dos
+modos para ese campo:
+- **Clave escrita** (correcto): toca el campo **Clave** y escribe el texto
+  literal `clips` (paso 4) o `text` (paso 5). Esto extrae el valor
+  automáticamente, siempre, sin preguntar nada.
+- **Clave vacía / "Preguntar cada vez"** (incorrecto): Atajos en su lugar te
+  muestra el JSON crudo en cada ejecución y te obliga a tocarlo a mano —
+  primero para elegir qué elemento, luego para elegir qué campo dentro de ese
+  elemento. Eso es exactamente la doble pregunta que estás viendo.
+
+Arreglo: abre el atajo, toca cada acción "Obtener valor del diccionario", y
+asegúrate de que el campo **Clave** tenga escrito literalmente `clips` o `text`
+(no "Preguntar cada vez" ni vacío) — igual para la clave del paso 5. Con ambas
+escritas, el atajo extrae los 5 textos en silencio, sin preguntas.
+
 ### Variante "reemplazar selección"
 Si quieres que, al lanzarlo desde el **menú de compartir sobre texto
 seleccionado**, reemplace la selección en vez de copiar:

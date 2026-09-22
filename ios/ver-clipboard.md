@@ -92,7 +92,21 @@ If your shortcut already has the Repeat/Add-to-Variable version, delete those
 two actions and replace them with the single "Get Dictionary Value (key: text)
 on the step-4 list" action from step 5.
 
-### "Replace selection" variant
+### Troubleshooting: the shortcut asks me to pick a value twice / shows raw JSON to tap through
+This means the **Key** field on a "Get Dictionary Value" action was left empty
+instead of having the key typed in. Shortcuts has two modes for that field:
+- **Key typed in** (correct): tap the **Key** field and type the literal text
+  `clips` (step 4) or `text` (step 5). This extracts automatically, every time,
+  with no prompt.
+- **Key left blank / "Ask Each Time"** (wrong): Shortcuts instead shows you the
+  raw JSON at runtime and makes you tap through it by hand — first to pick
+  which item, then to pick which field inside it. That's exactly the double
+  prompt you're seeing.
+
+Fix: open the shortcut, tap each "Get Dictionary Value" action, and make sure
+the **Key** field literally contains the text `clips` or `text` (not "Ask Each
+Time" and not left empty) — same for step 5's key. Once both are typed in,
+running the shortcut extracts the 5 texts silently with no prompts.
 If you want it to **replace the selection** instead of copying when launched from
 the **share sheet on selected text**:
 - In **Shortcut settings** enable **Show in Share Sheet** and accept **Text**

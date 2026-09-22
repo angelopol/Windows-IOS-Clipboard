@@ -57,16 +57,21 @@ Accept: application/json
    - **Encabezados**:
      - `Authorization` = `Bearer TU_TOKEN`
      - `Accept` = `application/json`
-4. **Obtener valor del diccionario** → clave `clips` (te da la lista de 5
-   objetos).
-5. **Obtener valor del diccionario** otra vez → clave `text`, **entrada: la
-   lista completa del paso 4** (no un elemento suelto — no uses aquí "Repetir
-   con cada"). Atajos devuelve una lista plana de exactamente 5 textos. Ver
-   Solución de problemas en
-   [ver-clipboard.es.md](ver-clipboard.es.md#solución-de-problemas-veo-más-de-5-elementos--datos-crudos-en-vez-de-texto-limpio)
-   si ves más de 5 o registros crudos en vez de texto limpio.
+4. **Obtener valor del diccionario** → campo **Clave** escrito literalmente
+   `clips` (te da la lista de 5 objetos). No dejes Clave vacía ni en "Preguntar
+   cada vez" — ver Solución de problemas más abajo.
+5. **Obtener valor del diccionario** otra vez → campo **Clave** escrito
+   literalmente `text`, **entrada: la lista completa del paso 4** (no un
+   elemento suelto — no uses aquí "Repetir con cada"). Atajos devuelve una
+   lista plana de exactamente 5 textos.
 6. **Elegir de la lista** → lista = la **salida del paso 5** (no la lista del
    paso 4 con objetos `{id, text, created_at}`), solicitar `Elige un texto`.
+
+Si ves más de 5 elementos, JSON crudo, o el atajo te pide tocar valores a mano,
+ver Solución de problemas en
+[ver-clipboard.es.md](ver-clipboard.es.md#solución-de-problemas-veo-más-de-5-elementos--datos-crudos-en-vez-de-texto-limpio)
+y
+[aquí](ver-clipboard.es.md#solución-de-problemas-el-atajo-me-pide-elegir-un-valor-dos-veces--me-muestra-el-json-crudo-para-tocarlo-a-mano).
 7. **Copiar al portapapeles** → resultado del paso 6.
 8. *(Opcional)* **Mostrar notificación**: "Copiado ✓".
 
