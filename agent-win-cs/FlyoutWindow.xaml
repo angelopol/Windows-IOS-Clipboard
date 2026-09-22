@@ -16,9 +16,17 @@
         </Border.Effect>
 
         <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="Portapapeles compartido"
-                       Margin="10,6,10,8" FontSize="12" FontWeight="SemiBold"
-                       Foreground="#9AA0AB"/>
+            <Border DockPanel.Dock="Top" Background="Transparent" Cursor="SizeAll"
+                    Padding="10,7,10,9" MouseLeftButtonDown="OnHeaderMouseDown"
+                    ToolTip="Arrastra aquí para mover la ventana">
+                <Grid>
+                    <TextBlock Text="Portapapeles compartido" FontSize="12"
+                               FontWeight="SemiBold" Foreground="#9AA0AB"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="⋮⋮" FontSize="13" Foreground="#5A6070"
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
 
             <ListBox x:Name="List" Background="Transparent" BorderThickness="0"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"

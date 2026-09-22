@@ -62,6 +62,15 @@ namespace ClipboardAgent
 
         private void OnItemActivated(object sender, MouseButtonEventArgs e) => Choose();
 
+        private void OnHeaderMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Arrastrar la cabecera mueve la ventana (no tiene barra de título).
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                try { DragMove(); } catch { }
+            }
+        }
+
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)

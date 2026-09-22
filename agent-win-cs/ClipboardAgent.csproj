@@ -10,7 +10,7 @@
     <AssemblyName>ClipboardAgent</AssemblyName>
     <RootNamespace>ClipboardAgent</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <AssemblyTitle>Clipboard compartido</AssemblyTitle>
   </PropertyGroup>
 

@@ -9,7 +9,8 @@ capture and registry-based auto-start.
 - **Auto-uploads** on copy — event-driven (`AddClipboardFormatListener`), no
   polling.
 - **`Ctrl+Alt+V`** opens a Win11-style flyout (rounded, shadow, keyboard nav)
-  with the last 5 shared texts; pick one to paste it where you were.
+  with the last 5 shared texts; pick one to paste it where you were. Drag the
+  header to move the window.
 - **Tray icon** with: *Auto-enviar*, *Iniciar con Windows*, *Ver portapapeles*,
   *Salir*.
 - **Auto-start** via the registry `Run` key — self-registers on first run.

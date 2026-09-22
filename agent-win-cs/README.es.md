@@ -10,7 +10,7 @@ portapapeles por eventos y auto-arranque por registro.
   sondeo.
 - **`Ctrl+Alt+V`** abre un flyout estilo Win11 (redondeado, sombra, navegación
   por teclado) con los últimos 5 textos compartidos; elige uno para pegarlo
-  donde estabas.
+  donde estabas. Arrastra la cabecera para mover la ventana.
 - **Icono de bandeja** con: *Auto-enviar*, *Iniciar con Windows*, *Ver
   portapapeles*, *Salir*.
 - **Auto-arranque** vía la clave `Run` del registro — se registra solo en el
