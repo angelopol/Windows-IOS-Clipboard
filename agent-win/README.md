@@ -1,6 +1,11 @@
 **English** · [Español](README.es.md)
 
-# Clipboard — Windows Agent
+# Clipboard — Windows Agent (Python, legacy)
+
+> 🗄️ **Legacy.** The current Windows agent is the native C# / WPF one in
+> [`../agent-win-cs/`](../agent-win-cs/README.md) (Win11-style flyout,
+> event-driven clipboard, registry auto-start). This Python version is kept for
+> reference.
 
 Background agent that connects your PC to the shared clipboard:
 

@@ -36,7 +36,8 @@ están disponibles en Windows y en el iPhone.
 |---------|--------|--------|
 | [`web/`](web/README.es.md) | API + panel de auth (Next.js + Neon, Vercel) | ✅ Fase 0 + 1 |
 | [`ios/`](ios/README.es.md) | Atajos de Shortcuts + guías | ✅ Fase 2 |
-| [`agent-win/`](agent-win/README.es.md) | Agente Windows (Python + tray) | ✅ Fase 3 |
+| [`agent-win-cs/`](agent-win-cs/README.es.md) | Agente Windows (C# / WPF, flyout estilo Win11) | ✅ actual |
+| [`agent-win/`](agent-win/README.es.md) | Agente Windows (Python + tray) | 🗄️ legacy |
 
 ## Roadmap
 

@@ -14,29 +14,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-dotnet@v4
         with:
-          python-version: '3.12'
+          dotnet-version: '9.0.x'
 
-      - name: Install dependencies
-        working-directory: agent-win
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt pyinstaller
-
-      - name: Build ClipboardAgent.exe
-        working-directory: agent-win
-        run: pyinstaller --noconsole --onefile --name ClipboardAgent --hidden-import=pystray._win32 agent.py
+      - name: Publish (single-file, self-contained)
+        run: >
+          dotnet publish agent-win-cs/ClipboardAgent.csproj
+          -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: ClipboardAgent
-          path: agent-win/dist/ClipboardAgent.exe
+          path: publish/ClipboardAgent.exe
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: agent-win/dist/ClipboardAgent.exe
+          files: publish/ClipboardAgent.exe
           generate_release_notes: true

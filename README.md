@@ -35,7 +35,8 @@ both Windows and iPhone.
 |--------|------------|--------|
 | [`web/`](web/README.md) | API + auth panel (Next.js + Neon, Vercel) | ✅ Phase 0 + 1 |
 | [`ios/`](ios/README.md) | Shortcuts + guides | ✅ Phase 2 |
-| [`agent-win/`](agent-win/README.md) | Windows agent (Python + tray) | ✅ Phase 3 |
+| [`agent-win-cs/`](agent-win-cs/README.md) | Windows agent (C# / WPF, Win11-style flyout) | ✅ current |
+| [`agent-win/`](agent-win/README.md) | Windows agent (Python + tray) | 🗄️ legacy |
 
 ## Roadmap
 

@@ -1,6 +1,11 @@
 [English](README.md) · **Español**
 
-# Clipboard — Agente de Windows
+# Clipboard — Agente de Windows (Python, legacy)
+
+> 🗄️ **Legacy.** El agente de Windows actual es el nativo en C# / WPF en
+> [`../agent-win-cs/`](../agent-win-cs/README.es.md) (flyout estilo Win11,
+> portapapeles por eventos, auto-arranque por registro). Esta versión Python se
+> conserva como referencia.
 
 Agente en segundo plano que conecta tu PC con el portapapeles compartido:
 
