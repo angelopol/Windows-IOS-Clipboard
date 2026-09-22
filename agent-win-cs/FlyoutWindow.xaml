@@ -7,7 +7,7 @@
         WindowStartupLocation="Manual"
         TextOptions.TextFormattingMode="Ideal"
         FontFamily="Segoe UI Variable Text, Segoe UI"
-        Loaded="OnLoaded" Deactivated="OnDeactivated" KeyDown="OnKeyDown">
+        Loaded="OnLoaded" Deactivated="OnDeactivated" PreviewKeyDown="OnPreviewKeyDown">
 
     <Border x:Name="Card" CornerRadius="12" Margin="14" Padding="6"
             Background="#F21F1F1F" BorderBrush="#26FFFFFF" BorderThickness="1">
@@ -31,7 +31,7 @@
             <ListBox x:Name="List" Background="Transparent" BorderThickness="0"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     MouseDoubleClick="OnItemActivated" SelectionMode="Single">
+                     PreviewMouseLeftButtonUp="OnListClick" SelectionMode="Single">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Padding" Value="10,9"/>
