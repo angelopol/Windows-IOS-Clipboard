@@ -17,7 +17,10 @@ function getClient(): NeonQueryFunction<false, false> {
       'Falta DATABASE_URL (o POSTGRES_URL). Configúrala en .env.local o en Vercel.',
     );
   }
-  cached = neon(connectionString);
+  // El driver de Neon consulta por HTTP (fetch). Next.js cachea los fetch en su
+  // Data Cache, lo que congelaba las lecturas de /api/clips (devolvía siempre el
+  // primer resultado). `cache: 'no-store'` fuerza a que cada consulta sea fresca.
+  cached = neon(connectionString, { fetchOptions: { cache: 'no-store' } });
   return cached;
 }
 
