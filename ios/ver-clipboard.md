@@ -1,23 +1,26 @@
-# Atajo iOS — "Ver Personal" (últimos 5 de este iPhone)
+**English** · [Español](ver-clipboard.es.md)
 
-Atajo para **ver tu clipboard personal**: pide al servidor los últimos 5 textos
-que subiste **desde este iPhone**, los muestra en un menú y copia el que elijas.
-Para ver lo de todos tus dispositivos, usa [Ver Compartido](ver-compartido.md).
+# iOS Shortcut — "View Personal" (last 5 from this iPhone)
 
----
-
-## Requisitos
-
-- **URL del servidor** — ej. `https://tu-app.vercel.app`
-- **Token del dispositivo** — se genera en el panel web (`/devices`) y se pega
-  en el atajo. Es secreto: no lo compartas.
-
-> El atajo consume `GET /api/clips?scope=personal`. El `scope=personal` filtra
-> por el dispositivo del token, así que solo verás lo subido desde este iPhone.
+Shortcut to **view your personal clipboard**: asks the server for the last 5
+texts you uploaded **from this iPhone**, shows them in a menu and copies the one
+you pick. To see texts from all your devices, use
+[View Shared](ver-compartido.md).
 
 ---
 
-## Contrato del endpoint que usa este atajo
+## Requirements
+
+- **Server URL** — e.g. `https://your-app.vercel.app`
+- **Device token** — generated in the web panel (`/devices`) and pasted into the
+  shortcut. It's secret: don't share it.
+
+> The shortcut uses `GET /api/clips?scope=personal`. `scope=personal` filters by
+> the token's device, so you only see what was uploaded from this iPhone.
+
+---
+
+## Endpoint contract used by this shortcut
 
 **Request**
 ```
@@ -30,68 +33,66 @@ Accept: application/json
 ```json
 {
   "clips": [
-    { "id": 42, "text": "primer texto (el más reciente)", "created_at": "2026-09-21T18:00:00Z" },
-    { "id": 41, "text": "segundo texto", "created_at": "2026-09-21T17:55:00Z" },
-    { "id": 40, "text": "tercero", "created_at": "2026-09-21T17:40:00Z" },
-    { "id": 39, "text": "cuarto", "created_at": "2026-09-21T17:10:00Z" },
-    { "id": 38, "text": "quinto", "created_at": "2026-09-21T16:30:00Z" }
+    { "id": 42, "text": "first text (the most recent)", "created_at": "2026-09-21T18:00:00Z" },
+    { "id": 41, "text": "second text", "created_at": "2026-09-21T17:55:00Z" },
+    { "id": 40, "text": "third", "created_at": "2026-09-21T17:40:00Z" },
+    { "id": 39, "text": "fourth", "created_at": "2026-09-21T17:10:00Z" },
+    { "id": 38, "text": "fifth", "created_at": "2026-09-21T16:30:00Z" }
   ]
 }
 ```
-- Orden: **más reciente primero**. Máximo 5.
-- La respuesta incluye `"scope": "personal"`.
-- Errores: `401` si el token es inválido/revocado.
+- Order: **most recent first**. Max 5.
+- The response includes `"scope": "personal"`.
+- Errors: `401` if the token is invalid/revoked.
 
 ---
 
-## Cómo construir el atajo (app Atajos)
+## How to build the shortcut (Shortcuts app)
 
-1. Abre **Atajos** → **+** (nuevo atajo). Nómbralo `Ver Personal`.
-2. **Texto** → escribe la URL base del servidor, ej. `https://tu-app.vercel.app`.
-   (Guardarla en una acción de Texto facilita cambiarla luego.)
-3. **Obtener contenido de la URL** (Get Contents of URL):
-   - **URL**: la variable del paso 2 + `/api/clips?scope=personal` → queda
-     `https://tu-app.vercel.app/api/clips?scope=personal`.
-   - Toca **Mostrar más** → **Método**: `GET`.
-   - **Encabezados** (Headers) → añade:
-     - `Authorization` = `Bearer TU_TOKEN`  *(pega tu token aquí)*
+1. Open **Shortcuts** → **+** (new shortcut). Name it `View Personal`.
+2. **Text** → type the server base URL, e.g. `https://your-app.vercel.app`.
+   (Storing it in a Text action makes it easy to change later.)
+3. **Get Contents of URL**:
+   - **URL**: the variable from step 2 + `/api/clips?scope=personal` → becomes
+     `https://your-app.vercel.app/api/clips?scope=personal`.
+   - Tap **Show more** → **Method**: `GET`.
+   - **Headers** → add:
+     - `Authorization` = `Bearer YOUR_TOKEN`  *(paste your token here)*
      - `Accept` = `application/json`
-4. **Obtener valor del diccionario** (Get Dictionary Value):
-   - **Obtener**: `Valor por` → clave `clips`. Entrada: la salida del paso 3.
-   - Esto te da la **lista** de 5 objetos.
-5. **Repetir con cada** (Repeat with Each) sobre la lista del paso 4:
-   - Dentro: **Obtener valor del diccionario** → clave `text` del
-     `Elemento de repetición`.
-   - **Añadir a variable** → variable `Textos` (acumula los 5 textos).
-   *(Alternativa más simple: usa "Obtener valor del diccionario" con clave
-   `text` directamente sobre la lista; Atajos devuelve todos los `text`.)*
-6. **Elegir de la lista** (Choose from List):
-   - Lista: variable `Textos`.
-   - **Solicitar**: `Elige un texto`.
-7. **Copiar al portapapeles** (Copy to Clipboard): entrada = resultado del
-   paso 6.
-8. *(Opcional)* **Mostrar notificación**: "Copiado ✓" para confirmar.
+4. **Get Dictionary Value**:
+   - **Get**: `Value for` → key `clips`. Input: the output of step 3.
+   - This gives you the **list** of 5 objects.
+5. **Repeat with Each** over the list from step 4:
+   - Inside: **Get Dictionary Value** → key `text` of `Repeat Item`.
+   - **Add to variable** → variable `Texts` (accumulates the 5 texts).
+   *(Simpler alternative: use "Get Dictionary Value" with key `text` directly on
+   the list; Shortcuts returns all the `text` values.)*
+6. **Choose from List**:
+   - List: variable `Texts`.
+   - **Prompt**: `Choose a text`.
+7. **Copy to Clipboard**: input = the result of step 6.
+8. *(Optional)* **Show Notification**: "Copied ✓" to confirm.
 
-### Variante "reemplazar selección"
-Si quieres que, al lanzarlo desde el **menú de compartir sobre texto
-seleccionado**, reemplace la selección en vez de copiar:
-- En **Ajustes del atajo** activa **Mostrar en pantalla de compartir** y acepta
-  entrada de tipo **Texto**.
-- Como **última acción**, en lugar de "Copiar al portapapeles", termina con la
-  acción que **devuelve** el texto elegido (deja el resultado del paso 6 como
-  salida del atajo). Al ejecutarlo desde la selección, iOS reemplaza el texto.
+### "Replace selection" variant
+If you want it to **replace the selection** instead of copying when launched from
+the **share sheet on selected text**:
+- In **Shortcut settings** enable **Show in Share Sheet** and accept **Text**
+  input.
+- As the **last action**, instead of "Copy to Clipboard", finish with the action
+  that **returns** the chosen text (leave step 6's result as the shortcut's
+  output). When run from the selection, iOS replaces the text.
 
 ---
 
-## Cómo lanzarlo
+## How to launch it
 
-- **Botón Acción / Back Tap / widget / home**: modo "ver y copiar".
-- **Menú de compartir** sobre texto seleccionado: modo "reemplazar selección"
-  (requiere la variante de arriba).
+- **Action Button / Back Tap / widget / home**: "view and copy" mode.
+- **Share sheet** on selected text: "replace selection" mode (requires the
+  variant above).
 
-## Notas
+## Notes
 
-- El token viaja en el header, siempre sobre **HTTPS**.
-- Si recibes `401`, el token fue revocado: genera uno nuevo en `/devices`.
-- Aquí ves **solo lo subido desde este iPhone**. Para el pool de todos los
-  dispositivos (Windows incluido), usa [Ver Compartido](ver-compartido.md).
+- The token travels in the header, always over **HTTPS**.
+- If you get `401`, the token was revoked: generate a new one at `/devices`.
+- Here you see **only what was uploaded from this iPhone**. For the pool of all
+  devices (Windows included), use [View Shared](ver-compartido.md).

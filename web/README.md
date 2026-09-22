@@ -1,80 +1,82 @@
+**English** · [Español](README.es.md)
+
 # Clipboard — Web / API (Vercel)
 
-Backend y panel de auth del portapapeles multiplataforma. Next.js (App Router)
-+ Vercel Postgres.
+Backend and auth panel for the cross-platform clipboard. Next.js (App Router)
++ Neon Postgres.
 
-## Puesta en marcha local
+## Local setup
 
-1. **Provisiona una base Neon** en Vercel (Storage → Create → Neon) o crea una
-   gratis en [neon.tech](https://neon.tech) y copia su connection string.
-2. **Variables de entorno** — copia el ejemplo y rellénalo:
+1. **Provision a Neon database** on Vercel (Storage → Create → Neon) or create a
+   free one at [neon.tech](https://neon.tech) and copy its connection string.
+2. **Environment variables** — copy the example and fill it in:
    ```bash
    cp .env.example .env.local
    ```
-   - `DATABASE_URL` — connection string de Neon. En Vercel: `vercel env pull .env.local`.
-   - `AUTH_SECRET` — genera uno:
+   - `DATABASE_URL` — Neon connection string. On Vercel: `vercel env pull .env.local`.
+   - `AUTH_SECRET` — generate one:
      ```bash
      node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
      ```
-3. **Crea las tablas**:
+3. **Create the tables**:
    ```bash
    npm run db:setup
    ```
-4. **Arranca**:
+4. **Run it**:
    ```bash
    npm run dev
    ```
-   Abre http://localhost:3000 → crea cuenta → `/devices` → genera un token.
+   Open http://localhost:3000 → create an account → `/devices` → generate a token.
 
-## Despliegue en Vercel
+## Deploy to Vercel
 
-1. `vercel` (o conecta el repo en el dashboard). Root directory: `web`.
-2. En el proyecto de Vercel añade la integración **Neon** y las env vars
-   `DATABASE_URL` (la da la integración) y `AUTH_SECRET`.
-3. Ejecuta el esquema una vez contra la base de producción:
+1. `vercel` (or connect the repo in the dashboard). Root directory: `web`.
+2. In the Vercel project add the **Neon** integration and the env vars
+   `DATABASE_URL` (provided by the integration) and `AUTH_SECRET`.
+3. Run the schema once against the production database:
    ```bash
-   vercel env pull .env.local   # trae DATABASE_URL de producción
+   vercel env pull .env.local   # pulls the production DATABASE_URL
    npm run db:setup
    ```
 
 ## API
 
-| Método | Ruta | Auth | Descripción |
+| Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| `POST` | `/api/clip` | `Bearer <device-token>` | Sube un texto `{ "text": "..." }` |
-| `GET` | `/api/clips?scope=personal\|shared` | `Bearer <device-token>` | Últimos 5. `personal` = solo este dispositivo; `shared` (defecto) = todos |
-| `POST` | `/api/devices` | sesión (cookie) | Crea dispositivo → devuelve token una vez |
-| `GET` | `/api/devices` | sesión | Lista dispositivos |
-| `DELETE` | `/api/devices/:id` | sesión | Revoca un dispositivo |
+| `POST` | `/api/clip` | `Bearer <device-token>` | Upload a text `{ "text": "..." }` |
+| `GET` | `/api/clips?scope=personal\|shared` | `Bearer <device-token>` | Last 5. `personal` = this device only; `shared` (default) = all |
+| `POST` | `/api/devices` | session (cookie) | Create device → returns the token once |
+| `GET` | `/api/devices` | session | List devices |
+| `DELETE` | `/api/devices/:id` | session | Revoke a device |
 | `POST` | `/api/auth/register` | — | `{ email, password }` |
 | `POST` | `/api/auth/login` | — | `{ email, password }` |
-| `POST` | `/api/auth/logout` | — | Cierra sesión |
+| `POST` | `/api/auth/logout` | — | Log out |
 
-### Probar con curl
+### Test with curl
 
 ```bash
-# Sube un texto
-curl -X POST https://TU-APP.vercel.app/api/clip \
+# Upload a text
+curl -X POST https://YOUR-APP.vercel.app/api/clip \
   -H "Authorization: Bearer clip_XXXX" \
   -H "Content-Type: application/json" \
-  -d '{"text":"hola desde curl"}'
+  -d '{"text":"hello from curl"}'
 
-# Lee los últimos 5
-curl https://TU-APP.vercel.app/api/clips \
+# Read the last 5
+curl https://YOUR-APP.vercel.app/api/clips \
   -H "Authorization: Bearer clip_XXXX"
 ```
 
-## Modelo de datos
+## Data model
 
-Ver [`schema.sql`](schema.sql): `users`, `devices` (token guardado como hash
-SHA-256), `clips` (podados a los 20 más recientes por usuario en cada inserción).
+See [`schema.sql`](schema.sql): `users`, `devices` (token stored as a SHA-256
+hash), `clips` (pruned to the 20 most recent per user on each insert).
 
-## Notas / pendientes
+## Notes / pending
 
-- DB con el SDK de **Neon** (`@neondatabase/serverless`). La capa está en
-  [`lib/db.ts`](lib/db.ts); el `sql` devuelve el array de filas directamente.
-  Variable de entorno: `DATABASE_URL` (también acepta `POSTGRES_URL`).
-- Auth es email + contraseña (sesión JWT en cookie httpOnly). Magic link queda
-  como mejora.
-- Sin cifrado E2E aún: el servidor ve el texto en claro (protegido por HTTPS +
-  token). E2E es la Fase 4 opcional.
+- DB via the **Neon** SDK (`@neondatabase/serverless`). The layer lives in
+  [`lib/db.ts`](lib/db.ts); its `sql` returns the row array directly. Env var:
+  `DATABASE_URL` (also accepts `POSTGRES_URL`).
+- Auth is email + password (JWT session in an httpOnly cookie). Magic link is a
+  future improvement.
+- No E2E encryption yet: the server sees plaintext (protected by HTTPS + token).
+  E2E is optional Phase 4.

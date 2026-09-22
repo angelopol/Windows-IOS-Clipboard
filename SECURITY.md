@@ -1,51 +1,53 @@
-# Seguridad y privacidad
+**English** · [Español](SECURITY.es.md)
 
-## Modelo actual
+# Security and privacy
 
-- **Transporte**: todo va sobre HTTPS (Vercel lo fuerza).
-- **Autenticación de dispositivos**: token por dispositivo (`Bearer`). En la
-  base solo se guarda su **hash SHA-256**; el token en claro se muestra una vez.
-  Se puede **revocar** individualmente desde `/devices`.
-- **Cuentas**: contraseña con **bcrypt**; sesión web en cookie **httpOnly**
-  (JWT firmado con `AUTH_SECRET`).
-- **Aislamiento**: cada consulta filtra por `user_id`; un token solo ve los
-  clips de su cuenta.
-- **Límites**: textos de hasta 100 000 caracteres; se retienen 20 por cuenta
-  (el resto se poda). Dedup de duplicados consecutivos.
+## Current model
 
-El servidor **puede leer** el texto en claro. Es lo que se decidió para el MVP
-(HTTPS + auth), a cambio de simplicidad y de que los atajos de iOS funcionen.
+- **Transport**: everything goes over HTTPS (Vercel enforces it).
+- **Device authentication**: per-device token (`Bearer`). The database stores
+  only its **SHA-256 hash**; the plaintext token is shown once. It can be
+  **revoked** individually from `/devices`.
+- **Accounts**: password with **bcrypt**; web session in an **httpOnly** cookie
+  (JWT signed with `AUTH_SECRET`).
+- **Isolation**: every query filters by `user_id`; a token only sees its own
+  account's clips.
+- **Limits**: texts up to 100,000 characters; 20 retained per account (the rest
+  are pruned). Dedup of consecutive duplicates.
 
-## Por qué NO hay cifrado extremo-a-extremo (todavía)
+The server **can read** the plaintext. That's what was decided for the MVP
+(HTTPS + auth), in exchange for simplicity and for the iOS shortcuts to work.
 
-E2E significaría que el servidor solo guardara **texto cifrado** y que la clave
-viviera solo en los dispositivos. El bloqueo está en **iOS Shortcuts**:
+## Why there is NO end-to-end encryption (yet)
 
-- La app Atajos **no tiene acciones de cifrado** (no hay AES con passphrase, ni
-  HMAC, ni derivación de clave). No se puede cifrar/descifrar el texto en el
-  iPhone dentro de un atajo.
-- Si ciframos en Windows, el iPhone **no podría leer** lo compartido, y
-  viceversa. E2E rompería el lado iOS.
+E2E would mean the server only stores **ciphertext** and the key lives only on
+the devices. The blocker is **iOS Shortcuts**:
 
-Conclusión: E2E real exige **sustituir los atajos por una app iOS nativa** (o una
-app con extensión de teclado/compartir) que haga la criptografía. Es un cambio
-de alcance grande y queda fuera de este MVP.
+- The Shortcuts app **has no crypto actions** (no AES with passphrase, no HMAC,
+  no key derivation). You cannot encrypt/decrypt the text on the iPhone inside a
+  shortcut.
+- If we encrypt on Windows, the iPhone **couldn't read** the shared pool, and
+  vice versa. E2E would break the iOS side.
 
-### Camino futuro para E2E (si algún día se hace app nativa)
+Conclusion: real E2E requires **replacing the shortcuts with a native iOS app**
+(or an app with a keyboard/share extension) that does the crypto. That's a large
+scope change and is out of this MVP.
 
-1. Passphrase por cuenta → derivar clave con **PBKDF2/scrypt/Argon2**.
-2. Cifrar cada texto con **AES-256-GCM** (nonce aleatorio por mensaje) en el
-   cliente; enviar `{ciphertext, nonce, tag}` en base64.
-3. El servidor guarda el blob tal cual (columna `text` = ciphertext).
-4. Descifrar en el cliente al leer. La clave **nunca** sale del dispositivo.
-5. Migración: columna nueva o flag `encrypted` para convivir con clips en claro.
+### Future path for E2E (if a native app is ever built)
 
-## Endurecimiento recomendado (siguiente iteración, sin tocar iOS)
+1. Per-account passphrase → derive a key with **PBKDF2/scrypt/Argon2**.
+2. Encrypt each text with **AES-256-GCM** (random nonce per message) on the
+   client; send `{ciphertext, nonce, tag}` as base64.
+3. The server stores the blob as-is (`text` column = ciphertext).
+4. Decrypt on the client when reading. The key **never** leaves the device.
+5. Migration: a new column or an `encrypted` flag to coexist with plaintext clips.
 
-- **Rate limiting** por token/IP en `/api/clip` y `/api/auth/*` (p. ej. con
-  Upstash Redis) para frenar abuso y fuerza bruta.
-- **Bloqueo de login** tras N intentos fallidos.
-- **Rotación/caducidad** opcional de tokens de dispositivo.
-- **Cabeceras de seguridad** (CSP, HSTS) en las respuestas del panel.
-- **Auditoría**: registrar `last_seen` ya existe; añadir IP/última acción.
-- **Purga por tiempo**: borrar clips más antiguos de X días además del tope de 20.
+## Recommended hardening (next iteration, without touching iOS)
+
+- **Rate limiting** per token/IP on `/api/clip` and `/api/auth/*` (e.g. with
+  Upstash Redis) to curb abuse and brute force.
+- **Login lockout** after N failed attempts.
+- Optional **rotation/expiry** of device tokens.
+- **Security headers** (CSP, HSTS) on the panel responses.
+- **Audit**: `last_seen` logging already exists; add IP/last action.
+- **Time-based purge**: delete clips older than X days on top of the 20 cap.

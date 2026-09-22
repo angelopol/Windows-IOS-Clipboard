@@ -1,53 +1,53 @@
-# Clipboard — Atajos de iPhone (iOS Shortcuts)
+**English** · [Español](README.es.md)
 
-Dos atajos de la app **Atajos** conectan tu iPhone con el portapapeles
-compartido. No hay una app que instalar: se construyen a mano siguiendo las
-guías (los `.shortcut` firmados son frágiles entre versiones de iOS, así que la
-guía reproducible es lo fiable).
+# Clipboard — iPhone Shortcuts (iOS Shortcuts)
 
-| Atajo | Qué hace | Guía |
-|-------|----------|------|
-| **Enviar Clipboard** | Sube al servidor la selección (menú de compartir) o el portapapeles | [enviar-clipboard.md](enviar-clipboard.md) |
-| **Ver Personal** | Últimos 5 textos subidos **desde este iPhone** (`scope=personal`) | [ver-clipboard.md](ver-clipboard.md) |
-| **Ver Compartido** | Últimos 5 de **todos los dispositivos** (`scope=shared`) | [ver-compartido.md](ver-compartido.md) |
+Three **Shortcuts** app shortcuts connect your iPhone to the shared clipboard.
+There's no app to install: you build them by hand following the guides (signed
+`.shortcut` files are fragile across iOS versions, so the reproducible guide is
+what's reliable).
 
-## Requisitos comunes
+| Shortcut | What it does | Guide |
+|----------|--------------|-------|
+| **Send Clipboard** | Uploads the selection (share sheet) or the clipboard | [enviar-clipboard.md](enviar-clipboard.md) |
+| **View Personal** | Last 5 texts uploaded **from this iPhone** (`scope=personal`) | [ver-clipboard.md](ver-clipboard.md) |
+| **View Shared** | Last 5 from **all devices** (`scope=shared`) | [ver-compartido.md](ver-compartido.md) |
 
-- **URL del servidor** (ej. `https://tu-app.vercel.app`) y un **token de
-  dispositivo** creado en el panel web (`/devices`). El mismo token vale para
-  ambos atajos.
+## Common requirements
 
-## Cómo lanzarlos (recomendado)
+- **Server URL** (e.g. `https://your-app.vercel.app`) and a **device token**
+  created in the web panel (`/devices`). The same token works for all shortcuts.
 
-- **Back Tap** (Ajustes → Accesibilidad → Tocar → Tocar la parte posterior):
-  asigna *Enviar* a doble toque y *Ver* a triple toque, por ejemplo.
-- **Botón Acción** (iPhone 15 Pro y posteriores) para el que más uses.
-- **Menú de compartir** sobre texto seleccionado (ideal para *Enviar* la
-  selección y para que *Ver* reemplace la selección).
+## How to launch them (recommended)
 
-## Límite importante de iOS
+- **Back Tap** (Settings → Accessibility → Touch → Back Tap): assign *Send* to a
+  double tap and *View* to a triple tap, for example.
+- **Action Button** (iPhone 15 Pro and later) for the one you use most.
+- **Share sheet** on selected text (ideal for *Send* the selection and for
+  *View* to replace the selection).
 
-Un atajo **no puede** detectar si estás en un campo de texto ni insertar en apps
-arbitrarias. Por eso:
+## Important iOS limitation
 
-- *Ver Clipboard* **reemplaza la selección** solo cuando se lanza desde el menú
-  de compartir con texto seleccionado; en cualquier otro caso **copia** al
-  portapapeles y tú pegas.
-- *Enviar Clipboard* sube la **selección** si se lanza desde compartir, o el
-  **portapapeles** si se lanza suelto.
+A shortcut **cannot** detect whether you're in a text field nor insert into
+arbitrary apps. Because of that:
 
-## Personal vs. compartido
+- *View Clipboard* **replaces the selection** only when launched from the share
+  sheet with text selected; otherwise it **copies** to the clipboard and you
+  paste.
+- *Send Clipboard* uploads the **selection** if launched from share, or the
+  **clipboard** if launched standalone.
 
-- **Personal** (`GET /api/clips?scope=personal`) = solo lo subido desde **este
-  dispositivo** (filtra por el token). Es tu historial propio del iPhone.
-- **Compartido** (`GET /api/clips?scope=shared`, o sin parámetro) = el pool de
-  **todos** los dispositivos de la cuenta. Es lo mismo que ve el agente de
-  Windows con `Ctrl+Alt+V`.
+## Personal vs. shared
 
-## Contratos de API
+- **Personal** (`GET /api/clips?scope=personal`) = only what was uploaded from
+  **this device** (filtered by the token). Your own iPhone history.
+- **Shared** (`GET /api/clips?scope=shared`, or no param) = the pool of **all**
+  the account's devices. Same as what the Windows agent sees with `Ctrl+Alt+V`.
 
-- `POST /api/clip` — `{ "text": "..." }` con `Authorization: Bearer <token>`.
-- `GET /api/clips?scope=personal|shared` — devuelve `{ "clips": [...], "scope" }`
-  (últimos 5). Sin `scope`, por defecto `shared`.
+## API contracts
 
-Detalle completo en [`web/README.md`](../web/README.md).
+- `POST /api/clip` — `{ "text": "..." }` with `Authorization: Bearer <token>`.
+- `GET /api/clips?scope=personal|shared` — returns `{ "clips": [...], "scope" }`
+  (last 5). Without `scope`, defaults to `shared`.
+
+Full detail in [`web/README.md`](../web/README.md).

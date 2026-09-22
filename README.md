@@ -1,22 +1,23 @@
-# Clipboard multiplataforma (Windows ↔ iPhone)
+**English** · [Español](README.es.md)
 
-Portapapeles compartido entre dispositivos a través de un servidor central.
-Copia algo en un dispositivo y pégalo en otro: los últimos textos de tu cuenta
-están disponibles en Windows y en el iPhone.
+# Cross-platform Clipboard (Windows ↔ iPhone)
 
-## Cómo funciona
+A clipboard shared across devices through a central server. Copy something on
+one device and paste it on another: your account's latest texts are available on
+both Windows and iPhone.
 
-- **Servidor (Vercel)** guarda una lista corta (últimos ~20, se muestran 5) por
-  cuenta. No hay sincronización en tiempo real: **push al copiar + pull bajo
-  demanda**, que encaja con serverless.
-- **Windows**: un agente en background envía al servidor cada vez que copias, y
-  con `Ctrl+Alt+V` muestra los textos compartidos para pegar. *(Fase 3)*
-- **iPhone**: atajos de la app Atajos para enviar (clipboard/selección) y ver
-  los últimos 5. *(Fase 2)*
-- **Web**: login y panel para enlazar/revocar dispositivos mediante tokens.
+## How it works
+
+- **Server (Vercel)** keeps a short list (last ~20, shows 5) per account. There
+  is no real-time sync: **push on copy + pull on demand**, which fits serverless.
+- **Windows**: a background agent uploads to the server every time you copy, and
+  `Ctrl+Alt+V` shows the shared texts to paste. *(Phase 3)*
+- **iPhone**: Shortcuts app shortcuts to send (clipboard/selection) and view the
+  last 5. *(Phase 2)*
+- **Web**: login and a panel to link/revoke devices via tokens.
 
 ```
-  iPhone (Shortcuts)          Windows (agente + tray)
+  iPhone (Shortcuts)          Windows (agent + tray)
         │  ▲                          │  ▲
    POST │  │ GET                 POST │  │ GET (Ctrl+Alt+V)
         ▼  │                          ▼  │
@@ -25,36 +26,35 @@ están disponibles en Windows y en el iPhone.
    │   /api/clip  /api/clips  /api/devices    │
    └───────────────────┬─────────────────────┘
                         ▼
-                 Vercel Postgres
+                    Neon Postgres
 ```
 
-## Estructura del repo
+## Repo layout
 
-| Carpeta | Qué es | Estado |
-|---------|--------|--------|
-| [`web/`](web/) | API + panel de auth (Next.js + Neon, Vercel) | ✅ Fase 0 + 1 |
-| [`ios/`](ios/) | Atajos de Shortcuts + guías | ✅ Fase 2 |
-| [`agent-win/`](agent-win/) | Agente Windows (Python + tray) | ✅ Fase 3 |
+| Folder | What it is | Status |
+|--------|------------|--------|
+| [`web/`](web/README.md) | API + auth panel (Next.js + Neon, Vercel) | ✅ Phase 0 + 1 |
+| [`ios/`](ios/README.md) | Shortcuts + guides | ✅ Phase 2 |
+| [`agent-win/`](agent-win/README.md) | Windows agent (Python + tray) | ✅ Phase 3 |
 
 ## Roadmap
 
-- [x] **Fase 0** — API `/api/clip` + `/api/clips`, DB (Neon), auth por token
-- [x] **Fase 1** — Web: login/registro + panel de dispositivos
-- [x] **Fase 2** — Atajos iPhone: [enviar](ios/enviar-clipboard.md) + [ver](ios/ver-clipboard.md)
-- [x] **Fase 3** — Agente Windows (auto-push al copiar + `Ctrl+Alt+V` para pegar)
-- [x] **Fase 4** — Pulido: dedup (server) + reintentos offline (agente). E2E
-  documentado como no viable con Shortcuts → ver [`SECURITY.md`](SECURITY.md)
+- [x] **Phase 0** — API `/api/clip` + `/api/clips`, DB (Neon), token auth
+- [x] **Phase 1** — Web: login/registration + device panel
+- [x] **Phase 2** — iPhone shortcuts: [send](ios/enviar-clipboard.md) + [view](ios/ver-clipboard.md)
+- [x] **Phase 3** — Windows agent (auto-push on copy + `Ctrl+Alt+V` to paste)
+- [x] **Phase 4** — Polish: dedup (server) + offline retries (agent). E2E
+  documented as not viable with Shortcuts → see [`SECURITY.md`](SECURITY.md)
 
-## Empezar
+## Getting started
 
-Ver [`web/README.md`](web/README.md) para levantar el servidor y desplegar en
-Vercel. Después, en `/devices`, genera un token por dispositivo y úsalo en el
-atajo de iOS ([`ios/ver-clipboard.md`](ios/ver-clipboard.md)) o en el agente de
-Windows.
+See [`web/README.md`](web/README.md) to run the server and deploy to Vercel.
+Then, on `/devices`, generate a per-device token and use it in the iOS shortcut
+([`ios/ver-clipboard.md`](ios/ver-clipboard.md)) or in the Windows agent.
 
-## Seguridad
+## Security
 
-- Tokens de dispositivo revocables, guardados como hash SHA-256.
-- Contraseñas con bcrypt, sesión en cookie httpOnly (JWT).
-- Todo sobre HTTPS. El cifrado E2E no es viable con Shortcuts de iOS; detalle y
-  camino futuro en [`SECURITY.md`](SECURITY.md).
+- Revocable per-device tokens, stored as SHA-256 hashes.
+- Passwords with bcrypt, session in an httpOnly cookie (JWT).
+- Everything over HTTPS. E2E encryption is not viable with iOS Shortcuts; detail
+  and a future path in [`SECURITY.md`](SECURITY.md).

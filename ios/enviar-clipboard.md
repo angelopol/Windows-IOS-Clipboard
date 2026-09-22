@@ -1,25 +1,27 @@
-# Atajo iOS — "Enviar Clipboard" (subir al servidor)
+**English** · [Español](enviar-clipboard.es.md)
 
-Atajo para **compartir un texto** desde el iPhone al portapapeles compartido.
-Funciona de dos formas con un único atajo:
+# iOS Shortcut — "Send Clipboard" (upload to the server)
 
-- **Desde el menú de compartir** sobre texto seleccionado → sube la selección.
-- **Suelto** (botón Acción, Back Tap, widget, home) → sube lo que tengas en el
-  **portapapeles** del iPhone.
+Shortcut to **share a text** from the iPhone to the shared clipboard. It works
+two ways with a single shortcut:
 
----
-
-## Requisitos
-
-- **URL del servidor** — ej. `https://tu-app.vercel.app`
-- **Token del dispositivo** — generado en el panel web (`/devices`). Secreto.
-
-> Consume el endpoint `POST /api/clip` (contrato abajo), que ya está
-> implementado en el backend.
+- **From the share sheet** on selected text → uploads the selection.
+- **Standalone** (Action Button, Back Tap, widget, home) → uploads whatever is
+  in the iPhone **clipboard**.
 
 ---
 
-## Contrato del endpoint
+## Requirements
+
+- **Server URL** — e.g. `https://your-app.vercel.app`
+- **Device token** — generated in the web panel (`/devices`). Secret.
+
+> Uses the `POST /api/clip` endpoint (contract below), already implemented in the
+> backend.
+
+---
+
+## Endpoint contract
 
 **Request**
 ```
@@ -27,58 +29,57 @@ POST /api/clip
 Authorization: Bearer <DEVICE_TOKEN>
 Content-Type: application/json
 
-{ "text": "el texto a compartir" }
+{ "text": "the text to share" }
 ```
 
 **Response `201`**
 ```json
 { "id": 43, "created_at": "2026-09-21T18:10:00Z" }
 ```
-- `400` si falta `text`; `401` si el token es inválido/revocado; `413` si el
-  texto supera 100 000 caracteres.
+- `400` if `text` is missing; `401` if the token is invalid/revoked; `413` if the
+  text exceeds 100,000 characters.
 
 ---
 
-## Cómo construir el atajo (app Atajos)
+## How to build the shortcut (Shortcuts app)
 
-1. **Atajos** → **+** (nuevo). Nómbralo `Enviar Clipboard`.
-2. En **Ajustes del atajo** (icono ⓘ o el interruptor de ajustes):
-   - Activa **Mostrar en pantalla de compartir**.
-   - En **Tipos de entrada aceptados** deja solo **Texto** (quita el resto para
-     que aparezca únicamente al seleccionar texto).
-3. **Obtener variable** → **Entrada del atajo** (Shortcut Input). Esta es la
-   selección cuando lo lanzas desde el menú de compartir.
-4. **Si** (If): *Entrada del atajo* → **tiene algún valor**.
-   - **Si (tiene valor):** añade **Definir variable** `Contenido` = *Entrada del
-     atajo*.
-   - **Si no:** añade **Obtener del portapapeles** (Get Clipboard) y luego
-     **Definir variable** `Contenido` = *Portapapeles*.
-   - Cierra el **Si**.
-5. **Obtener contenido de la URL** (Get Contents of URL):
-   - **URL**: `https://tu-app.vercel.app/api/clip`
-   - **Mostrar más** → **Método**: `POST`.
-   - **Encabezados**:
-     - `Authorization` = `Bearer TU_TOKEN`
+1. **Shortcuts** → **+** (new). Name it `Send Clipboard`.
+2. In **Shortcut settings** (the ⓘ icon or the settings toggle):
+   - Enable **Show in Share Sheet**.
+   - Under **Accepted input types** keep only **Text** (remove the rest so it
+     only appears when text is selected).
+3. **Get variable** → **Shortcut Input**. This is the selection when launched
+   from the share sheet.
+4. **If**: *Shortcut Input* → **has any value**.
+   - **If (has value):** add **Set variable** `Content` = *Shortcut Input*.
+   - **Otherwise:** add **Get Clipboard** and then **Set variable** `Content` =
+     *Clipboard*.
+   - Close the **If**.
+5. **Get Contents of URL**:
+   - **URL**: `https://your-app.vercel.app/api/clip`
+   - **Show more** → **Method**: `POST`.
+   - **Headers**:
+     - `Authorization` = `Bearer YOUR_TOKEN`
      - `Content-Type` = `application/json`
-   - **Cuerpo de la petición**: `JSON`
-     - Añade un campo **texto** con clave `text` y valor = variable `Contenido`.
-6. *(Opcional)* **Mostrar notificación**: "Compartido ✓".
+   - **Request Body**: `JSON`
+     - Add a **text** field with key `text` and value = the `Content` variable.
+6. *(Optional)* **Show Notification**: "Shared ✓".
 
-> Versión mínima (sin el paso "Si"): si solo quieres subir **la selección**,
-> usa directamente *Entrada del atajo* como `text`. Si solo quieres subir el
-> **portapapeles**, empieza con *Obtener del portapapeles*. El paso 4 combina
-> ambos comportamientos en un solo atajo.
+> Minimal version (without the "If" step): if you only want to upload **the
+> selection**, use *Shortcut Input* directly as `text`. If you only want to
+> upload the **clipboard**, start with *Get Clipboard*. Step 4 combines both
+> behaviors in a single shortcut.
 
 ---
 
-## Cómo lanzarlo
+## How to launch it
 
-- **Menú de compartir** sobre texto seleccionado → sube esa selección.
-- **Botón Acción / Back Tap / widget / home** → sube el portapapeles actual.
+- **Share sheet** on selected text → uploads that selection.
+- **Action Button / Back Tap / widget / home** → uploads the current clipboard.
 
-## Notas
+## Notes
 
-- Empareja con **"Ver Clipboard"** ([ver-clipboard.md](ver-clipboard.md)) para
-  recuperar lo que subiste (o lo que subió tu PC).
-- Si recibes `401`, el token fue revocado: genera otro en `/devices`.
-- El token viaja en el header, siempre sobre **HTTPS**.
+- Pairs with **"View Personal"** ([ver-clipboard.md](ver-clipboard.md)) to
+  retrieve what you uploaded (or what your PC uploaded).
+- If you get `401`, the token was revoked: generate another one at `/devices`.
+- The token travels in the header, always over **HTTPS**.

@@ -1,19 +1,20 @@
-# Clipboard — Agente de Windows
+**English** · [Español](README.es.md)
 
-Agente en segundo plano que conecta tu PC con el portapapeles compartido:
+# Clipboard — Windows Agent
 
-- **Auto-envía** al servidor cada vez que copias algo (`Ctrl+C`).
-- **`Ctrl+Alt+V`** abre un menú con los últimos 5 textos compartidos y pega el
-  que elijas en la app donde estabas.
-- Vive en la **bandeja del sistema** (tray) con menú para pausar el auto-envío
-  o salir.
+Background agent that connects your PC to the shared clipboard:
 
-## Requisitos
+- **Auto-uploads** to the server every time you copy something (`Ctrl+C`).
+- **`Ctrl+Alt+V`** opens a menu with the last 5 shared texts and pastes the one
+  you pick into the app you were in.
+- Lives in the **system tray** with a menu to pause auto-upload or quit.
 
-- Windows 10/11 y Python 3.10+.
-- Un token de dispositivo generado en el panel web (`/devices`).
+## Requirements
 
-## Instalación (modo desarrollo)
+- Windows 10/11 and Python 3.10+.
+- A device token generated in the web panel (`/devices`).
+
+## Install (development mode)
 
 ```powershell
 cd agent-win
@@ -23,51 +24,51 @@ pip install -r requirements.txt
 python agent.py
 ```
 
-La primera vez te pedirá la **URL del servidor** y el **token**. Se guardan en
-`%APPDATA%\ClipboardAgent\config.json`.
+The first time it will ask for the **server URL** and the **token**. They are
+saved in `%APPDATA%\ClipboardAgent\config.json`.
 
-> Alternativa sin diálogo: define las variables de entorno
-> `CLIPBOARD_SERVER_URL` y `CLIPBOARD_TOKEN` (tienen prioridad sobre el archivo).
+> Dialog-free alternative: set the environment variables
+> `CLIPBOARD_SERVER_URL` and `CLIPBOARD_TOKEN` (they take priority over the file).
 
-## Uso
+## Usage
 
-| Acción | Cómo |
-|--------|------|
-| Compartir un texto | Copia normal (`Ctrl+C`) → se sube solo |
-| Pegar de lo compartido | `Ctrl+Alt+V` → elige con flechas o teclas `1`–`5` → Enter |
-| Pausar auto-envío | Click en el icono de la bandeja → *Auto-enviar: ON/OFF* |
-| Salir | Menú de la bandeja → *Salir* |
+| Action | How |
+|--------|-----|
+| Share a text | Normal copy (`Ctrl+C`) → uploads by itself |
+| Paste from shared | `Ctrl+Alt+V` → pick with arrows or keys `1`–`5` → Enter |
+| Pause auto-upload | Click the tray icon → *Auto-upload: ON/OFF* |
+| Quit | Tray menu → *Quit* |
 
-## Empaquetar como .exe (PyInstaller)
+## Package as .exe (PyInstaller)
 
 ```powershell
 pip install pyinstaller
 pyinstaller --noconsole --onefile --name ClipboardAgent agent.py
 ```
 
-El ejecutable queda en `dist\ClipboardAgent.exe`.
+The executable lands in `dist\ClipboardAgent.exe`.
 
-### Arranque automático con Windows
+### Auto-start with Windows
 
-Crea un acceso directo a `ClipboardAgent.exe` (o a `pythonw agent.py`) en:
+Create a shortcut to `ClipboardAgent.exe` (or to `pythonw agent.py`) in:
 
 ```
 %APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
 ```
 
-## Notas y limitaciones
+## Notes and limitations
 
-- La detección de copia es por **sondeo** cada ~1 s (simple y estable). Copias
-  muy seguidas pueden fusionarse; suficiente para el uso normal.
-- El watcher ignora contenido **no textual** (imágenes) y evita el "eco" del
-  texto que acaba de pegar desde lo compartido.
-- **Sin conexión**: los envíos que fallan por red se guardan en una cola en
-  memoria y se reintentan cada ~15 s (hasta 50 pendientes). Los duplicados los
-  descarta el servidor, así que reintentar es seguro. La cola no persiste entre
-  reinicios del agente.
-- La librería `keyboard` captura el hotkey global; en algunos equipos con
-  políticas estrictas puede requerir ejecutar como administrador.
-- Al pegar, el agente devuelve el foco a la ventana anterior con la API de
-  Windows. Si alguna app no acepta el `Ctrl+V` automático, el texto ya quedó en
-  el portapapeles: pégalo manualmente.
-- Solo texto plano, y sobre HTTPS + token. Cifrado E2E: Fase 4 (pendiente).
+- Copy detection is by **polling** every ~1 s (simple and stable). Very rapid
+  copies may merge; fine for normal use.
+- The watcher ignores **non-textual** content (images) and avoids the "echo" of
+  text you just pasted from the shared pool.
+- **Offline**: uploads that fail due to network are stored in an in-memory queue
+  and retried every ~15 s (up to 50 pending). The server drops duplicates, so
+  retrying is safe. The queue does not persist across agent restarts.
+- The `keyboard` library captures the global hotkey; on some machines with
+  strict policies it may require running as administrator.
+- When pasting, the agent restores focus to the previous window via the Windows
+  API. If some app doesn't accept the automatic `Ctrl+V`, the text is already in
+  the clipboard: paste it manually.
+- Plaintext only, over HTTPS + token. E2E encryption: see
+  [`../SECURITY.md`](../SECURITY.md).

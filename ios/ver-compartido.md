@@ -1,24 +1,26 @@
-# Atajo iOS — "Ver Compartido" (últimos 5 de todos los dispositivos)
+**English** · [Español](ver-compartido.es.md)
 
-Atajo para **ver el clipboard compartido**: los últimos 5 textos subidos desde
-**cualquier** dispositivo de tu cuenta (Windows, iPhone, otros). Los muestra en
-un menú y copia el que elijas. Para ver solo lo tuyo de este iPhone, usa
-[Ver Personal](ver-clipboard.md).
+# iOS Shortcut — "View Shared" (last 5 from all devices)
 
-Es idéntico a "Ver Personal" salvo por la URL (sin `scope=personal`, o con
-`scope=shared`).
+Shortcut to **view the shared clipboard**: the last 5 texts uploaded from **any**
+device on your account (Windows, iPhone, others). Shows them in a menu and copies
+the one you pick. To see only your own from this iPhone, use
+[View Personal](ver-clipboard.md).
 
----
-
-## Requisitos
-
-- **URL del servidor** — ej. `https://tu-app.vercel.app`
-- **Token del dispositivo** — del panel web (`/devices`). El mismo que usan los
-  demás atajos.
+It's identical to "View Personal" except for the URL (without `scope=personal`,
+or with `scope=shared`).
 
 ---
 
-## Contrato del endpoint
+## Requirements
+
+- **Server URL** — e.g. `https://your-app.vercel.app`
+- **Device token** — from the web panel (`/devices`). The same one the other
+  shortcuts use.
+
+---
+
+## Endpoint contract
 
 **Request**
 ```
@@ -26,60 +28,60 @@ GET /api/clips?scope=shared
 Authorization: Bearer <DEVICE_TOKEN>
 Accept: application/json
 ```
-> `scope=shared` es el valor por defecto: llamar a `/api/clips` sin parámetro
-> devuelve lo mismo.
+> `scope=shared` is the default: calling `/api/clips` without a param returns the
+> same thing.
 
 **Response `200`**
 ```json
 {
   "clips": [
-    { "id": 43, "text": "copiado en el PC", "created_at": "2026-09-21T18:05:00Z" },
-    { "id": 42, "text": "copiado en el iPhone", "created_at": "2026-09-21T18:00:00Z" }
+    { "id": 43, "text": "copied on the PC", "created_at": "2026-09-21T18:05:00Z" },
+    { "id": 42, "text": "copied on the iPhone", "created_at": "2026-09-21T18:00:00Z" }
   ],
   "scope": "shared"
 }
 ```
-- Orden: **más reciente primero**. Máximo 5.
-- Errores: `401` si el token es inválido/revocado.
+- Order: **most recent first**. Max 5.
+- Errors: `401` if the token is invalid/revoked.
 
 ---
 
-## Cómo construir el atajo (app Atajos)
+## How to build the shortcut (Shortcuts app)
 
-1. Abre **Atajos** → **+** (nuevo atajo). Nómbralo `Ver Compartido`.
-2. **Texto** → la URL base del servidor, ej. `https://tu-app.vercel.app`.
-3. **Obtener contenido de la URL** (Get Contents of URL):
-   - **URL**: la variable del paso 2 + `/api/clips?scope=shared` → queda
-     `https://tu-app.vercel.app/api/clips?scope=shared`.
-   - **Mostrar más** → **Método**: `GET`.
-   - **Encabezados**:
-     - `Authorization` = `Bearer TU_TOKEN`
+1. Open **Shortcuts** → **+** (new shortcut). Name it `View Shared`.
+2. **Text** → the server base URL, e.g. `https://your-app.vercel.app`.
+3. **Get Contents of URL**:
+   - **URL**: the variable from step 2 + `/api/clips?scope=shared` → becomes
+     `https://your-app.vercel.app/api/clips?scope=shared`.
+   - **Show more** → **Method**: `GET`.
+   - **Headers**:
+     - `Authorization` = `Bearer YOUR_TOKEN`
      - `Accept` = `application/json`
-4. **Obtener valor del diccionario** → clave `clips` (te da la lista).
-5. **Repetir con cada** sobre la lista → dentro, **Obtener valor del
-   diccionario** clave `text` → **Añadir a variable** `Textos`.
-   *(Alternativa: "Obtener valor del diccionario" con clave `text` sobre la
-   lista devuelve todos los `text` directamente.)*
-6. **Elegir de la lista** → lista = `Textos`, solicitar `Elige un texto`.
-7. **Copiar al portapapeles** → resultado del paso 6.
-8. *(Opcional)* **Mostrar notificación**: "Copiado ✓".
+4. **Get Dictionary Value** → key `clips` (gives you the list).
+5. **Repeat with Each** over the list → inside, **Get Dictionary Value** key
+   `text` → **Add to variable** `Texts`.
+   *(Alternative: "Get Dictionary Value" with key `text` on the list returns all
+   the `text` values directly.)*
+6. **Choose from List** → list = `Texts`, prompt `Choose a text`.
+7. **Copy to Clipboard** → result of step 6.
+8. *(Optional)* **Show Notification**: "Copied ✓".
 
-### Variante "reemplazar selección"
-Igual que en [Ver Personal](ver-clipboard.md): activa **Mostrar en pantalla de
-compartir** aceptando **Texto**, y deja el texto elegido como **salida** del
-atajo (sin "Copiar al portapapeles") para reemplazar la selección al lanzarlo
-desde el menú de compartir.
+### "Replace selection" variant
+Same as in [View Personal](ver-clipboard.md): enable **Show in Share Sheet**
+accepting **Text**, and leave the chosen text as the shortcut's **output**
+(without "Copy to Clipboard") to replace the selection when launched from the
+share sheet.
 
 ---
 
-## Cómo lanzarlo
+## How to launch it
 
-- **Botón Acción / Back Tap / widget / home**: modo "ver y copiar".
-- **Menú de compartir** sobre texto seleccionado: modo "reemplazar selección".
+- **Action Button / Back Tap / widget / home**: "view and copy" mode.
+- **Share sheet** on selected text: "replace selection" mode.
 
-## Notas
+## Notes
 
-- Este es el equivalente iOS del menú `Ctrl+Alt+V` del agente de Windows: ambos
-  leen el mismo pool compartido.
-- El token viaja en el header, siempre sobre **HTTPS**.
-- Si recibes `401`, genera un token nuevo en `/devices`.
+- This is the iOS equivalent of the Windows agent's `Ctrl+Alt+V` menu: both read
+  the same shared pool.
+- The token travels in the header, always over **HTTPS**.
+- If you get `401`, generate a new token at `/devices`.
