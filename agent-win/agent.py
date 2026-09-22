@@ -243,8 +243,9 @@ def maybe_setup_autostart():
         and os.environ.get("CLIPBOARD_TOKEN")
     )
     if autostart.exe_path() and not used_env and not get_flag("autostart_setup"):
-        autostart.enable()
-        set_flag("autostart_setup", True)
+        # Solo marcamos el flag si el registro tuvo éxito, para reintentar si no.
+        if autostart.enable():
+            set_flag("autostart_setup", True)
 
 
 def main():
@@ -270,10 +271,9 @@ def main():
         icon.update_menu()
 
     def toggle_autostart(icon, _item):
-        if autostart.is_enabled():
-            autostart.disable()
-        else:
-            autostart.enable()
+        ok = autostart.disable() if autostart.is_enabled() else autostart.enable()
+        if not ok:
+            agent._notify("No se pudo cambiar el inicio con Windows.")
         icon.update_menu()
 
     def quit_app(icon, _item):

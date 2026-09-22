@@ -42,18 +42,17 @@ def enable():
     exe = exe_path()
     if not exe:
         return False
+    # /TR debe conservar comillas LITERALES alrededor de la ruta (por si tiene
+    # espacios). Con una lista, subprocess re-escaparía las comillas y schtasks
+    # fallaría; por eso pasamos el comando como cadena y controlamos el quoting.
+    cmd = (
+        f'schtasks /Create /TN {TASK_NAME} '
+        f'/TR "\\"{exe}\\"" /SC ONLOGON /RL LIMITED /IT /F'
+    )
     try:
         return (
-            _run(
-                [
-                    "schtasks", "/Create",
-                    "/TN", TASK_NAME,
-                    "/TR", f'"{exe}"',
-                    "/SC", "ONLOGON",
-                    "/RL", "LIMITED",
-                    "/IT",
-                    "/F",
-                ]
+            subprocess.run(
+                cmd, capture_output=True, creationflags=_CREATE_NO_WINDOW
             ).returncode
             == 0
         )
