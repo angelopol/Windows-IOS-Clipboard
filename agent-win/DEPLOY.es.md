@@ -39,9 +39,22 @@ de dispositivo (del panel `/devices`). Puedes:
 
 ## 3. Arranque automático
 
-### Recomendado — Task Scheduler al iniciar sesión
-Corre en tu sesión de usuario, así que el portapapeles, el hotkey `Ctrl+Alt+V` y
-el icono de bandeja funcionan.
+### Automático — se auto-registra en el primer arranque (recomendado)
+Solo ejecuta `ClipboardAgent.exe` una vez. En el primer arranque se registra
+solo en Task Scheduler para iniciar con la sesión (vía `schtasks`, sin
+herramientas extra). Corre en tu sesión de usuario, así que el portapapeles, el
+hotkey `Ctrl+Alt+V` y el icono de bandeja funcionan.
+
+- Actívalo/desactívalo cuando quieras desde el tray → **"Iniciar con Windows"**
+  (casilla).
+- Se auto-registra solo la **primera** vez; si lo apagas desde el tray, no
+  vuelve a activarse en el siguiente arranque.
+- El auto-registro se omite si usas variables de entorno (`CLIPBOARD_*`) o si
+  corres `python agent.py` (solo el `.exe` empaquetado se auto-registra).
+
+### Alternativa manual — script de PowerShell
+La misma tarea, desde un script (útil para setups automatizados o la build de
+desarrollo):
 
 ```powershell
 cd agent-win\service

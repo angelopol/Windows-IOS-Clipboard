@@ -3,8 +3,10 @@
 - Auto-envía al servidor cada vez que copias algo (watcher del portapapeles).
 - Con Ctrl+Alt+V muestra los últimos 5 textos compartidos para pegar.
 - Vive en la bandeja del sistema (tray) con menú para pausar/salir.
+- Al ejecutar el .exe por primera vez se registra para iniciar con Windows.
 """
 import ctypes
+import os
 import threading
 import time
 
@@ -15,7 +17,8 @@ import requests
 from PIL import Image, ImageDraw
 from pystray import MenuItem as Item
 
-from config import load_config, save_config, setup_dialog
+import autostart
+from config import get_flag, load_config, save_config, set_flag, setup_dialog
 
 user32 = ctypes.windll.user32
 HOTKEY = "ctrl+alt+v"
@@ -228,6 +231,22 @@ def make_image():
     return img
 
 
+def maybe_setup_autostart():
+    """Registra el arranque con Windows la PRIMERA vez que corre el .exe.
+
+    Solo si estamos empaquetados (no `python agent.py`) y sin usar variables de
+    entorno (modo headless). Se hace una sola vez: si luego lo desactivas desde
+    el tray, no se vuelve a re-registrar en el siguiente arranque.
+    """
+    used_env = bool(
+        os.environ.get("CLIPBOARD_SERVER_URL")
+        and os.environ.get("CLIPBOARD_TOKEN")
+    )
+    if autostart.exe_path() and not used_env and not get_flag("autostart_setup"):
+        autostart.enable()
+        set_flag("autostart_setup", True)
+
+
 def main():
     config = load_config()
     if not config:
@@ -235,6 +254,8 @@ def main():
         if not config:
             return
         save_config(config)
+
+    maybe_setup_autostart()
 
     agent = Agent(config)
     threading.Thread(target=agent.watch_clipboard, daemon=True).start()
@@ -248,6 +269,13 @@ def main():
         agent.auto_send = not agent.auto_send
         icon.update_menu()
 
+    def toggle_autostart(icon, _item):
+        if autostart.is_enabled():
+            autostart.disable()
+        else:
+            autostart.enable()
+        icon.update_menu()
+
     def quit_app(icon, _item):
         agent._stop.set()
         icon.stop()
@@ -256,6 +284,11 @@ def main():
         Item(
             lambda _item: f"Auto-enviar: {'ON' if agent.auto_send else 'OFF'}",
             toggle_auto,
+        ),
+        Item(
+            "Iniciar con Windows",
+            toggle_autostart,
+            checked=lambda _item: autostart.is_enabled(),
         ),
         Item("Salir", quit_app),
     )

@@ -37,6 +37,29 @@ def save_config(config):
         json.dump(config, f, indent=2)
 
 
+def _read_raw():
+    if os.path.exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (OSError, ValueError):
+            pass
+    return {}
+
+
+def get_flag(key, default=None):
+    """Lee un valor auxiliar de config.json (p.ej. si ya se hizo el autostart)."""
+    return _read_raw().get(key, default)
+
+
+def set_flag(key, value):
+    data = _read_raw()
+    data[key] = value
+    os.makedirs(APP_DIR, exist_ok=True)
+    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+
 def setup_dialog():
     """Pide URL y token en un diálogo. Devuelve el config o None si se cancela."""
     root = tk.Tk()

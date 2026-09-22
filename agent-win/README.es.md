@@ -46,9 +46,11 @@ Guía completa en [`DEPLOY.es.md`](DEPLOY.es.md). En resumen:
 
 - **Compilar el `.exe`**: haz push de un tag → GitHub Actions lo compila y
   publica un Release (sin Python local), o ejecuta `.\build.ps1` en local.
-- **Arranque automático (recomendado)**: `service\install-autostart.ps1` lo
-  registra en Task Scheduler al iniciar sesión — corre en tu sesión de usuario,
-  así que portapapeles, hotkey y tray funcionan.
+- **Arranque automático (recomendado)**: el `.exe` **se auto-registra** al
+  iniciar sesión en su primer arranque (Task Scheduler, sesión de usuario —
+  portapapeles, hotkey y tray funcionan). Actívalo/desactívalo desde el tray →
+  "Iniciar con Windows". También hay un script manual
+  (`service\install-autostart.ps1`).
 - **Servicio NSSM**: posible pero **no adecuado** — un servicio en session 0 no
   puede acceder al portapapeles, hotkey ni tray. Detalle y advertencia en
   [`DEPLOY.es.md`](DEPLOY.es.md).

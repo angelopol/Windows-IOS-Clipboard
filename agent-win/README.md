@@ -45,9 +45,10 @@ See [`DEPLOY.md`](DEPLOY.md) for the full guide. In short:
 
 - **Build the `.exe`**: push a tag → GitHub Actions builds it and publishes a
   Release (no local Python needed), or run `.\build.ps1` locally.
-- **Auto-start (recommended)**: `service\install-autostart.ps1` registers it via
-  Task Scheduler at logon — runs in your user session, so clipboard, hotkey and
-  tray work.
+- **Auto-start (recommended)**: the `.exe` **self-registers** at logon on first
+  run (Task Scheduler, user session — clipboard, hotkey and tray work). Toggle it
+  from the tray → "Iniciar con Windows". A manual script
+  (`service\install-autostart.ps1`) is also available.
 - **NSSM service**: possible but **not suitable** — a session-0 service can't
   access the clipboard, hotkey or tray. Details and caveat in
   [`DEPLOY.md`](DEPLOY.md).

@@ -38,9 +38,20 @@ Before auto-start, the agent needs the server URL and a device token
 
 ## 3. Auto-start
 
-### Recommended — Task Scheduler at logon
-Runs in your user session, so clipboard, the `Ctrl+Alt+V` hotkey and the tray
-icon all work.
+### Automatic — self-registers on first run (recommended)
+Just run `ClipboardAgent.exe` once. On first launch it registers itself with
+Task Scheduler to start at logon (via `schtasks`, no extra tools). It runs in
+your user session, so clipboard, the `Ctrl+Alt+V` hotkey and the tray icon all
+work.
+
+- Toggle it anytime from the tray menu → **"Iniciar con Windows"** (checkbox).
+- It self-registers only the **first** time; if you turn it off from the tray it
+  won't come back on the next launch.
+- Self-registration is skipped when running via env vars (`CLIPBOARD_*`) or as
+  `python agent.py` (only the packaged `.exe` self-registers).
+
+### Manual alternative — PowerShell script
+Same task, from a script (useful for scripted setups or the dev build):
 
 ```powershell
 cd agent-win\service
