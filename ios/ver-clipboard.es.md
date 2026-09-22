@@ -61,18 +61,37 @@ Accept: application/json
 4. **Obtener valor del diccionario** (Get Dictionary Value):
    - **Obtener**: `Valor por` → clave `clips`. Entrada: la salida del paso 3.
    - Esto te da la **lista** de 5 objetos.
-5. **Repetir con cada** (Repeat with Each) sobre la lista del paso 4:
-   - Dentro: **Obtener valor del diccionario** → clave `text` del
-     `Elemento de repetición`.
-   - **Añadir a variable** → variable `Textos` (acumula los 5 textos).
-   *(Alternativa más simple: usa "Obtener valor del diccionario" con clave
-   `text` directamente sobre la lista; Atajos devuelve todos los `text`.)*
+5. **Obtener valor del diccionario** otra vez, sobre la lista del paso 4:
+   - **Obtener**: `Valor por` → clave `text`.
+   - **Entrada: la lista del paso 4** (no un elemento suelto — no uses aquí un
+     bucle "Repetir con cada"). Atajos aplica la clave a todos los elementos de
+     la lista de una vez y devuelve una lista plana de exactamente 5 textos.
+     Esto es lo importante: saltarse este paso y elegir directo de la lista del
+     paso 4 es la causa #1 de ver "el registro completo" en vez de texto limpio
+     — ver Solución de problemas más abajo.
 6. **Elegir de la lista** (Choose from List):
-   - Lista: variable `Textos`.
+   - Lista: la **salida del paso 5** (la lista plana de textos — no la lista
+     del paso 4 con objetos `{id, text, created_at}`).
    - **Solicitar**: `Elige un texto`.
 7. **Copiar al portapapeles** (Copy to Clipboard): entrada = resultado del
    paso 6.
 8. *(Opcional)* **Mostrar notificación**: "Copiado ✓" para confirmar.
+
+### Solución de problemas: veo más de 5 elementos / datos crudos en vez de texto limpio
+Esto siempre significa que **Elegir de la lista** (paso 6) apunta a la variable
+equivocada. Pasa de dos formas:
+- **Elegir directo de la lista del paso 4**, saltándote el paso 5. Cada fila
+  muestra entonces el registro completo `{id, text, created_at}` — se ve como
+  "toda la lista" en vez de 5 líneas limpias.
+- **Usar "Repetir con cada" + "Añadir a variable"** para armar la lista a mano.
+  Si esa variable no se reinicia en un solo lugar, o el atajo se vuelve a
+  ejecutar antes de terminar, las entradas se pueden ir acumulando entre
+  ejecuciones. Quitar el bucle (paso 5 de arriba) elimina este problema por
+  completo — no hay nada que acumular.
+
+Si tu atajo ya tiene la versión con Repetir/Añadir a variable, borra esas dos
+acciones y sustitúyelas por la única acción "Obtener valor del diccionario
+(clave: text) sobre la lista del paso 4" del paso 5.
 
 ### Variante "reemplazar selección"
 Si quieres que, al lanzarlo desde el **menú de compartir sobre texto

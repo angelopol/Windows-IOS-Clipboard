@@ -57,12 +57,16 @@ Accept: application/json
    - **Encabezados**:
      - `Authorization` = `Bearer TU_TOKEN`
      - `Accept` = `application/json`
-4. **Obtener valor del diccionario** → clave `clips` (te da la lista).
-5. **Repetir con cada** sobre la lista → dentro, **Obtener valor del
-   diccionario** clave `text` → **Añadir a variable** `Textos`.
-   *(Alternativa: "Obtener valor del diccionario" con clave `text` sobre la
-   lista devuelve todos los `text` directamente.)*
-6. **Elegir de la lista** → lista = `Textos`, solicitar `Elige un texto`.
+4. **Obtener valor del diccionario** → clave `clips` (te da la lista de 5
+   objetos).
+5. **Obtener valor del diccionario** otra vez → clave `text`, **entrada: la
+   lista completa del paso 4** (no un elemento suelto — no uses aquí "Repetir
+   con cada"). Atajos devuelve una lista plana de exactamente 5 textos. Ver
+   Solución de problemas en
+   [ver-clipboard.es.md](ver-clipboard.es.md#solución-de-problemas-veo-más-de-5-elementos--datos-crudos-en-vez-de-texto-limpio)
+   si ves más de 5 o registros crudos en vez de texto limpio.
+6. **Elegir de la lista** → lista = la **salida del paso 5** (no la lista del
+   paso 4 con objetos `{id, text, created_at}`), solicitar `Elige un texto`.
 7. **Copiar al portapapeles** → resultado del paso 6.
 8. *(Opcional)* **Mostrar notificación**: "Copiado ✓".
 

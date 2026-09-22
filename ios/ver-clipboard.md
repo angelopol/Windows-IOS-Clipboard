@@ -62,16 +62,35 @@ Accept: application/json
 4. **Get Dictionary Value**:
    - **Get**: `Value for` → key `clips`. Input: the output of step 3.
    - This gives you the **list** of 5 objects.
-5. **Repeat with Each** over the list from step 4:
-   - Inside: **Get Dictionary Value** → key `text` of `Repeat Item`.
-   - **Add to variable** → variable `Texts` (accumulates the 5 texts).
-   *(Simpler alternative: use "Get Dictionary Value" with key `text` directly on
-   the list; Shortcuts returns all the `text` values.)*
+5. **Get Dictionary Value** again, on the list from step 4:
+   - **Get**: `Value for` → key `text`.
+   - **Input: the list from step 4** (not a single item — don't use a "Repeat
+     with Each" loop here). Shortcuts applies the key to every item in the list
+     at once and returns a flat list of exactly 5 text strings. This is the
+     important part: skipping this and choosing straight from the step-4 list
+     is the #1 cause of seeing "the whole record" instead of clean text — see
+     Troubleshooting below.
 6. **Choose from List**:
-   - List: variable `Texts`.
+   - List: the **output of step 5** (the flat list of texts — not step 4's
+     list of `{id, text, created_at}` objects).
    - **Prompt**: `Choose a text`.
 7. **Copy to Clipboard**: input = the result of step 6.
 8. *(Optional)* **Show Notification**: "Copied ✓" to confirm.
+
+### Troubleshooting: I get more than 5 items / raw data instead of clean text
+This always means **Choose from List** (step 6) is pointed at the wrong
+variable. Two ways this happens:
+- **Choosing from step 4's list directly**, skipping step 5. Each row then
+  shows the full `{id, text, created_at}` record — it looks like "the whole
+  list" instead of 5 clean lines.
+- **Using "Repeat with Each" + "Add to Variable"** to build the list by hand.
+  If that variable isn't reset in one place, or the shortcut is re-run before
+  finishing, entries can pile up across runs. Removing the loop (step 5 above)
+  removes this failure mode entirely — there's nothing to accumulate.
+
+If your shortcut already has the Repeat/Add-to-Variable version, delete those
+two actions and replace them with the single "Get Dictionary Value (key: text)
+on the step-4 list" action from step 5.
 
 ### "Replace selection" variant
 If you want it to **replace the selection** instead of copying when launched from
